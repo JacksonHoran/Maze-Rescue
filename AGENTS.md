@@ -1,5 +1,13 @@
 # Project Guidelines for AI Agents
 
+## Agent Rules (Read First)
+- **Follow the README**: Read [`README.md`](README.md) before making changes and follow its directions. If the README and this file conflict, stop and ask the user.
+- **Never push to `main`**: Do not commit directly on `main`, push to `main`, or force-push to it. Work on a feature branch and open a pull request instead.
+- **No agent watermarks on commits**: Commit messages must not contain any agent attribution, e.g. `Co-Authored-By:` trailers naming an AI/agent, "Generated with ..." lines, or tool signatures or emoji markers.
+- **User is the sole author**: Every commit must have the user as its only author and committer, taken from the existing git config. Never add an agent as author, committer, or co-author, and never change `user.name` / `user.email` or pass `--author`.
+
+---
+
 ## Environment & Build
 - **Language**: Scala 3 (3.8.x+)
 - **Build Tool**: sbt (1.13.x+)
