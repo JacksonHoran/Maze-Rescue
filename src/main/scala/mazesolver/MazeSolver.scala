@@ -69,8 +69,9 @@ def initGame(lines: Array[String] = defaultMazeLines, startEnergy: Int = 12)
 
 /** True when the cell at (row, col) is inside the grid and is not a wall. */
 def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
-  // TODO: Check if (row, col) is within maze bounds and not a wall ('#')
-  false
+  row >= 0 && row < maze.length &&
+    col >= 0 && col < maze(row).length &&
+    maze(row)(col) != '#'
 
 /** Translate a direction character into a (dRow, dCol) delta.
   *
@@ -80,8 +81,12 @@ def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
   *   Some((dr, dc)) for a recognised direction, None otherwise
   */
 def directionDelta(direction: Char): Option[(Int, Int)] =
-  // TODO: Map 'U', 'D', 'L', 'R' to their corresponding (dRow, dCol) coordinate offsets
-  None
+  direction match
+    case 'U' => Some((-1, 0))
+    case 'D' => Some((1, 0))
+    case 'L' => Some((0, -1))
+    case 'R' => Some((0, 1))
+    case _   => None
 
 /** Try to move the robot one step in the given direction.
   *
@@ -125,9 +130,18 @@ def render(
     energy: Int,
     cellsCollected: Int = 0
 ): String =
-  // TODO: Render the maze grid with '@' at the robot's current position,
-  // followed by a status line: s"Energy: $energy  Cells: $cellsCollected"
-  ""
+  val sb = new StringBuilder
+  var r = 0
+  while r < maze.length do
+    var c = 0
+    while c < maze(r).length do
+      if r == robot(0) && c == robot(1) then sb.append('@')
+      else sb.append(maze(r)(c))
+      c += 1
+    sb.append('\n')
+    r += 1
+  sb.append(s"Energy: $energy  Cells: $cellsCollected")
+  sb.toString
 
 // ─── Game loop ───────────────────────────────────────────────────────────────
 
@@ -196,9 +210,9 @@ def localReset(position: Array[Int]): Unit =
   *   the number of times action returned true
   */
 def repeatUntilStopped(action: => Boolean): Int =
-  // TODO: Repeatedly evaluate call-by-name action until it evaluates to false,
-  // returning the number of times action returned true.
-  0
+  var count = 0
+  while action do count += 1
+  count
 
 // ─── Part 3: Recursive flood-fill scanner ────────────────────────────────────
 
@@ -224,16 +238,17 @@ def revealReachable(
     row: Int,
     col: Int
 ): Int =
-  // TODO: Reveal all reachable (non-wall) cells from (row, col) using recursive flood fill.
-  // Base cases:
-  //   - out of bounds -> return 0
-  //   - wall ('#') -> return 0
-  //   - already revealed -> return 0
-  // Recursive step:
-  //   - mark (row, col) as revealed
-  //   - recurse into all four neighbours (up, down, left, right)
-  //   - return 1 + sum of newly revealed neighbours
-  0
+  if row < 0 || row >= maze.length || col < 0 || col >= maze(row).length then 0
+  else if maze(row)(col) == '#' then 0
+  else if revealed(row)(col) then 0
+  else
+    // Mark before recursing so loops in the maze cannot revisit this cell
+    revealed(row)(col) = true
+    1 +
+      revealReachable(maze, revealed, row - 1, col) +
+      revealReachable(maze, revealed, row + 1, col) +
+      revealReachable(maze, revealed, row, col - 1) +
+      revealReachable(maze, revealed, row, col + 1)
 
 /** Iterative flood-fill using an explicit mutable stack (stretch goal / extra credit).
   *
@@ -249,9 +264,21 @@ def revealReachableIterative(
     startRow: Int,
     startCol: Int
 ): Int =
-  // TODO (Extra Credit): Implement iterative flood-fill using an explicit mutable stack
-  // (scala.collection.mutable.Stack).
-  0
+  val stack = scala.collection.mutable.Stack[(Int, Int)]()
+  stack.push((startRow, startCol))
+  var count = 0
+  while stack.nonEmpty do
+    val (row, col) = stack.pop()
+    if row >= 0 && row < maze.length && col >= 0 && col < maze(row).length &&
+      maze(row)(col) != '#' && !revealed(row)(col)
+    then
+      revealed(row)(col) = true
+      count += 1
+      stack.push((row - 1, col))
+      stack.push((row + 1, col))
+      stack.push((row, col - 1))
+      stack.push((row, col + 1))
+  count
 
 /** Help message describing all interactive REPL commands. */
 def helpMessage(): String =
