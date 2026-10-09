@@ -596,8 +596,35 @@ class StudentMazeSolverTest:
     // TODO: Verify that a robot running out of energy becomes stranded and returns (0, cells, false).
     assertTrue(true)
 
-  @Test @DisplayName("TODO: student test for scanner on cyclic corridors")
+  @Test @DisplayName("revealReachable terminates on a corridor loop and counts each cell once")
   def testScannerCyclicCorridor(): Unit =
-    // TODO: Verify that recursive flood fill terminates correctly without infinite recursion
-    // when corridors form loops.
-    assertTrue(true)
+    // A ring corridor around a central wall: every cell has two paths back to the start
+    val lines = Array(
+      "#####",
+      "#...#",
+      "#.#.#",
+      "#...#",
+      "#####"
+    )
+    val maze = parseMaze(lines)
+    val revealed = makeRevealed(maze)
+    assertEquals(8, revealReachable(maze, revealed, 1, 1), "All 8 ring cells, no double counting")
+    assertFalse(revealed(2)(2), "Central wall should not be revealed")
+    assertEquals(0, revealReachable(maze, revealed, 3, 3), "Second scan finds nothing new")
+
+  @Test @DisplayName("recursive and iterative flood fill agree on every non-square sample maze")
+  def testFloodFillAgreesOnSampleMazes(): Unit =
+    for name <- sampleMazeNames do
+      val (maze1, robot, _, _) = initGame(loadMazeFromResource(name))
+      val revealed1 = makeRevealed(maze1)
+      val countRec = revealReachable(maze1, revealed1, robot(0), robot(1))
+
+      val (maze2, _, _, _) = initGame(loadMazeFromResource(name))
+      val revealed2 = makeRevealed(maze2)
+      val countIter = revealReachableIterative(maze2, revealed2, robot(0), robot(1))
+
+      assertEquals(countRec, countIter, s"Count mismatch in $name")
+      for
+        r <- maze1.indices
+        c <- maze1(r).indices
+      do assertEquals(revealed1(r)(c), revealed2(r)(c), s"Mismatch at ($r,$c) in $name")
