@@ -368,5 +368,5 @@ In this assignment, all state is represented using raw arrays (`Array[Array[Char
 
 ### AI Usage Disclosure
 * [ ] No AI tools were used on this assignment.
-* [ ] AI tools were used (describe tool, prompts, and provide transcript link below or transcript document(s) in doc/ subdirectory):
-  > [TODO: AI transcript link or statement]
+* [x] AI tools were used (describe tool, prompts, and provide transcript link below or transcript document(s) in doc/ subdirectory):
+  > Claude Code (Claude Opus 5.5) was used for Part B code, tests, and Deliverables 3–4. See [doc/ai-usage.md](doc/ai-usage.md) for the tool, prompts, and transcript.
