@@ -293,22 +293,53 @@ Given the 4×4 `tinyLines` maze:
 ```
 Trace `revealReachable(maze, revealed, 1, 1)`:
 
+Neighbours are explored in the order up, down, left, right. Indentation shows stack depth.
+`push` means a new activation record was created, and `pop` means it returned.
+
 ```
-[TODO: Show the sequence of activation records pushed and popped from the call stack, including arguments (row, col) and return values]
+push reveal(1,1)                 in bounds, '.', not revealed -> mark revealed(1)(1)
+  push reveal(0,1)               wall '#'
+  pop  reveal(0,1)  -> 0
+  push reveal(2,1)               in bounds, '.', not revealed -> mark revealed(2)(1)
+    push reveal(1,1)             already revealed
+    pop  reveal(1,1)  -> 0
+    push reveal(3,1)             wall '#'
+    pop  reveal(3,1)  -> 0
+    push reveal(2,0)             wall '#'
+    pop  reveal(2,0)  -> 0
+    push reveal(2,2)             wall '#'
+    pop  reveal(2,2)  -> 0
+  pop  reveal(2,1)  -> 1 + 0 + 0 + 0 + 0 = 1
+  push reveal(1,0)               wall '#'
+  pop  reveal(1,0)  -> 0
+  push reveal(1,2)               in bounds, '.', not revealed -> mark revealed(1)(2)
+    push reveal(0,2)             wall '#'
+    pop  reveal(0,2)  -> 0
+    push reveal(2,2)             wall '#'
+    pop  reveal(2,2)  -> 0
+    push reveal(1,1)             already revealed
+    pop  reveal(1,1)  -> 0
+    push reveal(1,3)             wall '#'
+    pop  reveal(1,3)  -> 0
+  pop  reveal(1,2)  -> 1 + 0 + 0 + 0 + 0 = 1
+pop  reveal(1,1)  -> 1 + 0 + 1 + 0 + 1 = 3
+
+Total: 13 activation records, maximum depth 3, result 3
+Final revealed cells: (1,1), (2,1), (1,2)
 ```
 
 **Questions:**
 1. What values are stored in each activation record (stack frame) on the JVM?
-   > [TODO: Your answer here]
+   > Each frame stores the parameters: `row` and `col` as plain `Int` values, and *references* to the shared `maze` and `revealed` arrays (not copies of the arrays). It also stores the running sum `1 + up + down + ...` while it waits for each recursive call to return, plus the return address so the program knows where to continue in the caller when the frame is popped.
 
 2. Which invocations hit the base cases (out of bounds, wall `#`, or already revealed)?
-   > [TODO: Your answer here]
+   > **Wall:** `(0,1)`, `(1,0)`, `(3,1)`, `(2,0)`, `(2,2)` (twice), `(0,2)`, and `(1,3)`. **Already revealed:** `(1,1)` twice, once from `(2,1)` and once from `(1,2)`, when each tries to step back to where it came from. **Out of bounds:** none, because the maze has a wall border, so the wall check stops the recursion before it can leave the grid.
 
 3. Why is marking `revealed(row)(col) = true` *prior* to recursive neighbor exploration essential to avoid infinite recursion?
-   > [TODO: Your answer here]
+   > Neighbouring cells call each other: `(1,1)` calls `(2,1)`, and `(2,1)` calls back up to `(1,1)`. If `(1,1)` weren't marked yet, that call-back would start over from `(1,1)`, and the two cells would keep calling each other until a `StackOverflowError`. Marking first means the call-back hits the "already revealed" base case and returns 0. Since each cell can only be marked once, there are at most `M*N` cells that recurse further, so the recursion always ends, even in mazes with loops.
 
 4. What is the maximum theoretical stack depth in the worst-case maze of size $M \times N$?
-   > [TODO: Your answer here]
+   > About $M \times N$. The worst case is a single winding corridor that passes through every open cell. The recursion follows it one cell at a time without returning, so every cell has a frame on the stack at once, plus one more for the final base-case call. For the 4×4 example the depth is only 3.
 
 ---
 
@@ -316,11 +347,11 @@ Trace `revealReachable(maze, revealed, 1, 1)`:
 
 Compare `revealReachable` (recursive) with `revealReachableIterative` (explicit heap stack):
 * **Memory location of state:**
-  > [TODO: Your answer here]
+  > The recursive version keeps its pending work in JVM call-stack frames, one per active call. The call stack is small (usually about 512 KB–1 MB). The iterative version keeps pending work as `(row, col)` tuples in a `mutable.Stack` on the **heap** and only uses one stack frame. In both versions the `maze` and `revealed` arrays are on the heap.
 * **Risk of `StackOverflowError` vs. `OutOfMemoryError`:**
-  > [TODO: Your answer here]
+  > The recursive version can go as deep as the longest path in the maze, so a very large maze (e.g. 1000×1000 with one long winding corridor) can run out of call-stack space and throw `StackOverflowError`, even with plenty of memory free. The iterative version only uses heap memory, which is much larger (usually gigabytes), so it would need a huge maze to cause an `OutOfMemoryError`.
 * **Performance tradeoffs (function invocation overhead vs object allocation):**
-  > [TODO: Your answer here]
+  > The recursive version pays for a method call every time (creating a frame and passing arguments) but doesn't create any objects. The iterative version avoids those calls but creates a new tuple object for each push, which adds work for the garbage collector. For the small sample mazes the difference is too small to notice. The real benefit of the iterative version is that it doesn't crash on large mazes, not that it's faster.
 
 ---
 
