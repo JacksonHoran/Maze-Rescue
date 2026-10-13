@@ -100,23 +100,30 @@ def moveRobot(
     robot: Array[Int],
     direction: Char
 ): Boolean =
-  // TODO: If the target cell in the given direction is walkable, update robot(0) and robot(1)
-  // in place and return true; otherwise return false
-  false
+  directionDelta(direction) match
+    case Some((dr, dc)) =>
+      val row = robot(0) + dr
+      val col = robot(1) + dc
+      if isWalkable(maze, row, col) then
+        robot(0) = row
+        robot(1) = col
+        true
+      else false
+    case None => false
 
 /** If the robot is standing on an energy cell ('C'), collect it.
   *
   * The cell is replaced with '.' and 1 is returned; otherwise 0.
   */
 def collectCell(maze: Array[Array[Char]], robot: Array[Int]): Int =
-  // TODO: If the robot is standing on an energy cell ('C'), replace it with '.' and return 1;
-  // otherwise return 0
-  0
+    if maze(robot(0))(robot(1)) == 'C' then
+    maze(robot(0))(robot(1)) = '.'
+    1
+  else 0
 
 /** True when the robot is standing on the exit ('E'). */
 def isAtExit(maze: Array[Array[Char]], robot: Array[Int]): Boolean =
-  // TODO: Return true if the robot is standing on the exit marker ('E')
-  false
+  maze(robot(0))(robot(1)) == 'E'
 
 // ─── Rendering ───────────────────────────────────────────────────────────────
 
@@ -159,10 +166,7 @@ def playMoves(
     moves: String,
     startEnergy: Int = 12
 ): Int =
-  // TODO: Execute moves string sequentially, deducting 1 energy per valid move,
-  // adding 3 energy per collected cell ('C'), stopping when stranded (0 energy) or at exit ('E').
-  // Return remaining energy.
-  0
+  playGame(maze, robot, moves, startEnergy)._1
 
 /** A cleaner playMoves that properly tracks cell collection and energy bonus.
   *
@@ -177,17 +181,25 @@ def playGame(
     moves: String,
     startEnergy: Int = 12
 ): (Int, Int, Boolean) =
-  // TODO: Execute moves string, deducting 1 energy per valid move, adding 3 per collected cell.
-  // Track cells collected and whether the robot reached the exit.
-  // Return (remainingEnergy, cellsCollected, reachedExit).
-  (startEnergy, 0, false)
+  var energy = startEnergy
+  var cellsCollected = 0
+  var reachedExit = isAtExit(maze, robot)
+  var i = 0
+  while i < moves.length && energy > 0 && !reachedExit do
+    if moveRobot(maze, robot, moves(i)) then
+      energy -= 1
+      val collected = collectCell(maze, robot)
+      cellsCollected += collected
+      energy += 3 * collected
+      reachedExit = isAtExit(maze, robot)
+    i += 1
+  (energy, cellsCollected, reachedExit)
 
 // ─── Part 2: Parameter passing and aliasing ──────────────────────────────────
 
 /** Mutates the shared array — caller sees the change. */
 def moveNorth(position: Array[Int]): Unit =
-  // TODO: Mutate position(0) to move north (decrement row by 1)
-  ()
+  position(0) -= 1
 
 /** Demonstrates that rebinding a local val cannot affect the caller's reference.
   *
@@ -195,8 +207,8 @@ def moveNorth(position: Array[Int]): Unit =
   * This version shows the same principle.
   */
 def localReset(position: Array[Int]): Unit =
-  // TODO: Explore parameter passing semantics: create a local val `replacement = Array(1, 1)`
-  // and demonstrate why the caller's position array is unaffected.
+    // This is a separate array; creating it does not rebind or mutate position.
+  val replacement = Array(1, 1)
   ()
 
 // ─── Part 2 (cont.): Call by name ────────────────────────────────────────────
