@@ -117,9 +117,9 @@ def moveRobot(
   */
 def collectCell(maze: Array[Array[Char]], robot: Array[Int]): Int =
     if maze(robot(0))(robot(1)) == 'C' then
-    maze(robot(0))(robot(1)) = '.'
-    1
-  else 0
+      maze(robot(0))(robot(1)) = '.'
+      1
+    else 0
 
 /** True when the robot is standing on the exit ('E'). */
 def isAtExit(maze: Array[Array[Char]], robot: Array[Int]): Boolean =
