@@ -116,10 +116,10 @@ def moveRobot(
   * The cell is replaced with '.' and 1 is returned; otherwise 0.
   */
 def collectCell(maze: Array[Array[Char]], robot: Array[Int]): Int =
-    if maze(robot(0))(robot(1)) == 'C' then
-      maze(robot(0))(robot(1)) = '.'
-      1
-    else 0
+  if maze(robot(0))(robot(1)) == 'C' then
+    maze(robot(0))(robot(1)) = '.'
+    1
+  else 0
 
 /** True when the robot is standing on the exit ('E'). */
 def isAtExit(maze: Array[Array[Char]], robot: Array[Int]): Boolean =
@@ -207,7 +207,7 @@ def moveNorth(position: Array[Int]): Unit =
   * This version shows the same principle.
   */
 def localReset(position: Array[Int]): Unit =
-    // This is a separate array; creating it does not rebind or mutate position.
+  // This is a separate array; creating it does not rebind or mutate position.
   val replacement = Array(1, 1)
   ()
 
