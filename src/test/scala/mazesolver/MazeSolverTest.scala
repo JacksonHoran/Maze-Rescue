@@ -585,16 +585,32 @@ class StudentMazeSolverTest:
   // - Mazes with multiple energy cells or alternate branches
   // - Emergency scanner on mazes with cyclic / loop-containing corridors
 
-  @Test @DisplayName("TODO: student test for completely trapped robot")
+  @Test @DisplayName("trapped robot cannot move in any direction and preserves energy")
   def testTrappedRobot(): Unit =
-    // TODO: Construct a maze where the robot is enclosed by walls '#', attempt moves in all 4 directions,
-    // and verify the robot cannot move and energy is preserved.
-    assertTrue(true)
+    val (maze, robot, _, _) = initGame(Array("#####", "#R#E#", "#####"), 10)
+    for direction <- "UDLR" do
+      assertFalse(moveRobot(maze, robot, direction), s"$direction should be blocked")
+      assertArrayEquals(Array(1, 1), robot, s"$direction must leave the robot in place")
 
-  @Test @DisplayName("TODO: student test for energy exhaustion mid-journey")
+    val (energy, cells, escaped) = playGame(maze, robot, "UDLR", 10)
+    assertEquals(10, energy, "Blocked moves must not consume energy")
+    assertEquals(0, cells)
+    assertFalse(escaped)
+    assertArrayEquals(Array(1, 1), robot)
+
+  @Test @DisplayName("energy exhaustion stops remaining moves and preserves collected-cell count")
   def testEnergyExhaustion(): Unit =
-    // TODO: Verify that a robot running out of energy becomes stranded and returns (0, cells, false).
-    assertTrue(true)
+    val lines = Array("##########", "#RC....CE#", "##########")
+    val (maze, robot, _, _) = initGame(lines, 2)
+    // The first cell adds 3 energy, allowing five moves before the robot is stranded.
+    // The remaining commands would reach another cell and the exit if incorrectly executed.
+    val (energy, cells, escaped) = playGame(maze, robot, "RRRRRRR", 2)
+    assertEquals(0, energy)
+    assertEquals(1, cells, "The cell collected before exhaustion must still be counted")
+    assertFalse(escaped)
+    assertArrayEquals(Array(1, 6), robot, "No moves may execute after energy reaches zero")
+    assertEquals('.', maze(1)(2), "The first cell should be consumed")
+    assertEquals('C', maze(1)(7), "The cell beyond the stopping point must remain untouched")
 
   @Test @DisplayName("revealReachable terminates on a corridor loop and counts each cell once")
   def testScannerCyclicCorridor(): Unit =

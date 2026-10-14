@@ -254,9 +254,9 @@ Trace the three moves `R`, `D`, `D` on the `smallLines` 5×5 maze starting at `(
 | Step | Move Command | Attempted Pos | Walkable? | Updated Robot Pos | Remaining Energy | Cells Collected | Note |
 |:----:|:------------:|:-------------:|:---------:|:-----------------:|:----------------:|:---------------:|:-----|
 | 0 | *Init* | — | — | `(1, 1)` | 10 | 0 | Initial state |
-| 1 | `R` | `(1, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
-| 2 | `D` | `(2, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
-| 3 | `D` | `(2, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
+| 1 | `R` | `(1, 2)` | Yes | `(1, 2)` | 9 | 0 | Move onto block. Costs 1 energy |
+| 2 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Wall blocks movement. Costs 0 energy |
+| 3 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Movement blocked by same wall. Costs 0 energy |
 
 ---
 
@@ -267,18 +267,43 @@ Illustrate with an ASCII diagram the stack and heap layout during execution of:
 2. `localReset(pos)`
 
 ```
-[TODO: Provide your ASCII memory diagram here showing Stack Frames, Callee Parameters, and Heap Arrays]
+During moveNorth(pos):
+
+STACK                              HEAP
+Caller:
+  pos ────────────────────────────► Array A [3, 2]
+                                      ▲
+moveNorth frame:                      │
+  position ───────────────────────────┘
+
+position(0) -= 1 changes Array A to [2, 2].
+After return, the caller's pos sees [2, 2].
+
+
+During localReset(pos):
+
+STACK                              HEAP
+Caller:
+  pos ────────────────────────────► Array A [2, 2]
+                                      ▲
+localReset frame:                     │
+  position ───────────────────────────┘
+  replacement ────────────────────► Array B [1, 1]
+
+Array A is unchanged.
+After return, pos still points to Array A [2, 2].
+Array B can be garbage-collected once unreachable.
 ```
 
 **Written Explanation:**
 1. Why does `moveNorth` mutate the caller's array, whereas passing an `Int` variable (e.g. `energy`) cannot be mutated by the callee?
-   > [TODO: Your answer here]
+   > Scala passes arguments by value. For an array, the copied value is a reference, so `pos` and `position` point to the same array. Changing an element changes that shared array. For an `Int`, the numeric value is copied; changing a local variable holding that value does not change the caller’s variable.
 
 2. Why does Scala reject `position = Array(1, 1)` in parameter lists, and what happens when you rebind a local `val replacement = Array(1, 1)`?
-   > [TODO: Your answer here]
+   > Parameters are immutable bindings, so `position` cannot be reassigned. Its array elements can still be mutated. Declaring `replacement` creates a separate local binding pointing to a new array; it does not change the caller’s reference or original array
 
 3. How does call-by-name (`action: => Boolean` in `repeatUntilStopped`) fundamentally differ from passing a reference or passing a primitive value?
-   > [TODO: Your answer here]
+   > A call-by-value argument is evaluated once before the call, and its resulting value is passed. A call-by-name argument passes an expression whose evaluation is deferred until it is used. In `repeatUntilStopped`, `action` is evaluated again for every loop-condition check, allowing each check to perform an action and observe updated state.
 
 ---
 
@@ -359,14 +384,15 @@ Compare `revealReachable` (recursive) with `revealReachableIterative` (explicit 
 
 In this assignment, all state is represented using raw arrays (`Array[Array[Char]]`, `Array[Int]`) and loose variables passed into top-level procedures.
 1. What problems or vulnerabilities arise when multiple procedures directly read and mutate naked arrays?
-   > [TODO: Your answer here]
+   > Any procedure holding an array reference can change its contents, so one procedure can accidentally affect another through aliasing. Arrays also leave important rules unenforced: a position array could have the wrong length, row and column could be swapped, or the robot could be placed outside the maze. Passing separate arrays and variables makes it easier to mix up state from different games and harder to trace unexpected changes.
 
 2. How would an Object-Oriented or ADT-based design (e.g., `Maze`, `Robot`, `Cell`, `Position`) improve encapsulation, type safety, and maintainability in Project 2?
-   > [TODO: Your answer here]
+   > A `Maze` could protect its grid and provide methods that check bounds and control cell collection. A `Robot` could keep its position and energy together, while a `Position` type could give row and column explicit names. A `Cell` ADT could represent walls, floors, energy cells, and exits without relying on character markers. These types would make invalid state harder to create, keep validation in one place, and make the code easier to understand, test, and extend.
 
 ---
 
 ### AI Usage Disclosure
 * [ ] No AI tools were used on this assignment.
 * [x] AI tools were used (describe tool, prompts, and provide transcript link below or transcript document(s) in doc/ subdirectory):
-  > Claude Code (Claude Opus 5.5) was used for Part B code, tests, and Deliverables 3–4. See [doc/ai-usage.md](doc/ai-usage.md) for the tool, prompts, and transcript.
+  > Claude Code (Claude Opus 5.5) was used for Part B code, tests, and Deliverables 3–4. Codex (GPT-6.1 Sol) was used for Deliverables 1, 2, 5, and the completing the remainder of Maze-Rescue.scala. See [doc/ai-usage.md](doc/ai-usage.md) for the tool, prompts, and transcript.
+  

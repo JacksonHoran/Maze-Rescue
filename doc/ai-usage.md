@@ -32,6 +32,23 @@ The prompts given to the AI, in order:
 8. "can you make the written response answers that you wrote but simpler, still technical but a littel simpler"
 9. "mark the AI disclosure as yes, then create a MD file in a doc/ directory and link to it in the readme"
 10. "yes export the transcript and link it"
+11. "my parnter did part A, can you sift through the repo and make sure everything is done?"
+12. "yea lets draft those up now. Do not commit anything yet."
+
+
+### OpenAI Codex
+
+1. "can we get started on maze-rescue main file"
+2. "double check the readme's requirements"
+3. "Follow the deliverable 1 prompt"
+4. "Follow the deliverable 2 prompt"
+5. "Follow the Deliverable 5 prompt"
+6. "Let's work on the remaining StudentMazeSolverTest tests to fulfill the requirement"
+7. "lets work on the studentmazesolvertest class", followed by the edge-case checklist for trapped robots, energy exhaustion, multiple cells or alternate branches, and cyclic scanner traversal.
+8. Requests to draft AI usage and transcript documentation covering implementation, tests, and written deliverables.
+Second session (Part A review and drafts):
+
+
 
 ## Transcript
 
