@@ -254,9 +254,9 @@ Trace the three moves `R`, `D`, `D` on the `smallLines` 5×5 maze starting at `(
 | Step | Move Command | Attempted Pos | Walkable? | Updated Robot Pos | Remaining Energy | Cells Collected | Note |
 |:----:|:------------:|:-------------:|:---------:|:-----------------:|:----------------:|:---------------:|:-----|
 | 0 | *Init* | — | — | `(1, 1)` | 10 | 0 | Initial state |
-| 1 | `R` | `(1, 2)` | Yes | `(1, 2)` | 9 | 0 | Floor `.`: move succeeds and costs 1 energy |
-| 2 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Wall `#`: blocked, robot stays put, no energy spent |
-| 3 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Same wall again: still blocked, state unchanged |
+| 1 | `R` | `(1, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
+| 2 | `D` | `(2, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
+| 3 | `D` | `(2, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
 
 ---
 
@@ -267,45 +267,18 @@ Illustrate with an ASCII diagram the stack and heap layout during execution of:
 2. `localReset(pos)`
 
 ```
-(a) During moveNorth(pos)
-
-    STACK                                   HEAP
-    +---------------------------+
-    | main / caller             |
-    |   pos      = ref ---------+------+--> +--------+-------+
-    |   energy   = 10           |      |    | 2 -> 1 |   2   |   Array[Int]
-    +---------------------------+      |    +--------+-------+
-    | moveNorth                 |      |       ^
-    |   position = ref ---------+------+       |
-    +---------------------------+         position(0) -= 1
-                                           changes index 0 from 2 to 1 in the ONE shared array
-    After return: the caller's pos reads (1, 2). The change is visible.
-
-(b) During localReset(pos)
-
-    STACK                                   HEAP
-    +---------------------------+
-    | main / caller             |
-    |   pos         = ref ------+------+--> +-------+-------+
-    +---------------------------+      |    |   1   |   2   |   (unchanged)
-    | localReset                |      |    +-------+-------+
-    |   position    = ref ------+------+
-    |   replacement = ref ------+---------> +-------+-------+
-    +---------------------------+           |   1   |   1   |   new array
-                                            +-------+-------+
-    After return: the localReset frame is popped. replacement's array has no
-    references left and becomes garbage. The caller's pos still reads (1, 2).
+[TODO: Provide your ASCII memory diagram here showing Stack Frames, Callee Parameters, and Heap Arrays]
 ```
 
 **Written Explanation:**
 1. Why does `moveNorth` mutate the caller's array, whereas passing an `Int` variable (e.g. `energy`) cannot be mutated by the callee?
-   > Scala passes every argument by value, but for an array the value that gets copied is a *reference* to the array on the heap. `position` in `moveNorth` and `pos` in the caller are two separate variables holding the same reference, so `position(0) -= 1` changes the one shared array and the caller sees it. An `Int` like `energy` is copied as the number itself into the callee's frame. Changing the callee's copy can't reach the caller's variable, and Scala parameters are `val`s, so the callee can't even assign to it.
+   > [TODO: Your answer here]
 
 2. Why does Scala reject `position = Array(1, 1)` in parameter lists, and what happens when you rebind a local `val replacement = Array(1, 1)`?
-   > Parameters in Scala are always `val`s, so `position = Array(1, 1)` is a compile error ("reassignment to val"). Even in a language that allowed it, it would only change the callee's copy of the reference, not the caller's variable. Writing `val replacement = Array(1, 1)` creates a brand-new array on the heap and stores its reference in a new local variable. `position` and the caller's `pos` still point to the original array, which is untouched. When `localReset` returns, its frame is popped and the new array is garbage collected.
+   > [TODO: Your answer here]
 
 3. How does call-by-name (`action: => Boolean` in `repeatUntilStopped`) fundamentally differ from passing a reference or passing a primitive value?
-   > With call-by-value (whether the value is a primitive or a reference), the argument is evaluated **once**, before the call, and the callee gets the result. With call-by-name (`action: => Boolean`), the caller passes the *unevaluated expression* (compiled to a small function, a "thunk"), and it runs again **every time** `action` is used inside the body. That is why `while action do count += 1` works: each loop check re-runs the expression, which can move the robot and return a new result. If `action` were a plain `Boolean`, it would be evaluated once, and the loop would either never run or never stop.
+   > [TODO: Your answer here]
 
 ---
 
@@ -386,14 +359,14 @@ Compare `revealReachable` (recursive) with `revealReachableIterative` (explicit 
 
 In this assignment, all state is represented using raw arrays (`Array[Array[Char]]`, `Array[Int]`) and loose variables passed into top-level procedures.
 1. What problems or vulnerabilities arise when multiple procedures directly read and mutate naked arrays?
-   > When any procedure can read and write the raw arrays, nothing protects the game's rules. Any code can set `robot(0) = -5`, write `'@'` or `'Z'` into the maze, or forget to subtract energy. The robot's state is split across an `Array[Int]` plus loose `energy` and `cellsCollected` variables that the caller has to keep in sync, so it's easy to update one and forget another (for example, the `main` REPL and `playGame` each repeat the same move/collect/energy logic). Aliasing makes this worse: since arrays are shared by reference, a change made deep inside one procedure silently affects every other holder of that array. Types also don't help: `Array[Int]` doesn't say it must have exactly 2 elements, `Char` can be any character not just a valid tile, and a `(row, col)` tuple can easily be swapped to `(col, row)` with no compiler error.
+   > [TODO: Your answer here]
 
 2. How would an Object-Oriented or ADT-based design (e.g., `Maze`, `Robot`, `Cell`, `Position`) improve encapsulation, type safety, and maintainability in Project 2?
-   > An OO/ADT design groups data together with the only operations allowed to change it. A `Robot` class could keep its `Position` and energy `private` and expose only `move(direction)`, so energy is always charged and bounds are always checked in one place. A `Maze` could hide its grid and offer `isWalkable` and `collectAt`, so no outside code can write invalid tiles. For type safety, an enum like `Cell = Wall | Floor | EnergyCell | Exit` and `Direction = Up | Down | Left | Right` replace raw `Char`s, so pattern matches are checked to be exhaustive and invalid values can't be built, and a `Position(row, col)` case class removes the risk of mixing up the two `Int`s. For maintainability, adding a new tile type or rule means changing one type and having the compiler point to every place that must handle it, instead of searching the code for every `'C'` or `'#'`.
+   > [TODO: Your answer here]
 
 ---
 
 ### AI Usage Disclosure
 * [ ] No AI tools were used on this assignment.
 * [x] AI tools were used (describe tool, prompts, and provide transcript link below or transcript document(s) in doc/ subdirectory):
-  > Claude Code (Claude Opus 5.5) was used by Jackson for Part B code and tests, for drafting Deliverables 3–4 (later revised by Jackson), and for drafting the Part A student tests and Deliverables 1, 2 and 5. See [doc/ai-usage.md](doc/ai-usage.md) for the tool, prompts, and transcript.
+  > Claude Code (Claude Opus 5.5) was used for Part B code, tests, and Deliverables 3–4. See [doc/ai-usage.md](doc/ai-usage.md) for the tool, prompts, and transcript.
