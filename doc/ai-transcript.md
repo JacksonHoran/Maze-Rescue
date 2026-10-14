@@ -1254,3 +1254,201 @@ Counter({'attachment': 65, 'assistant': 61, 'user': 33, 'queue-operation': 20, '
 Shell cwd was reset to /Users/jacksonhoran/home/college/dev/comp371/Maze-Rescue
 ```
 </details>
+
+
+
+# AI Usage Transcript
+
+**Tool:** OpenAI Codex  
+**Used by:** Victor Dodan  
+**Scope:** `MazeSolver.scala`, additional tests, and written Deliverables 1, 2, and 5.
+
+This is an abridged transcript containing relevant prompts and response summaries. Responses labeled as summaries are not verbatim. Environment setup, Git operations, and unrelated discussion are omitted.
+
+## 1. Implementation
+
+**User:**
+> can we get started on maze-rescue main file
+
+**Codex response (summary):**
+Implemented the remaining TODO procedures in `MazeSolver.scala`:
+- `moveRobot`: updates the robot position only when the destination is walkable.
+- `collectCell`: removes a collected cell and returns the collection count.
+- `isAtExit`: checks for the exit marker.
+- `playGame`: tracks energy, cells, and escape; stops when energy runs out or the exit is reached.
+- `playMoves`: delegates to `playGame` and returns remaining energy.
+- `moveNorth`: mutates the caller’s position array.
+- `localReset`: creates a separate local array without changing the caller’s array.
+
+Codex also created four tests in `GameLoopEdgeCasesTest.scala`. Compilation, formatting, packaging, all 66 tests, and a CLI escape sequence passed in the Codex workspace.
+
+**User clarification:**
+> i didn't yet add the tests. Only the maze-rescue implementation
+
+The implementation-only PR did not include the additional test file.
+
+## 2. README Requirements Review
+
+**User:**
+> double check the readme's requirements
+
+**Codex response (summary):**
+Identified incomplete written Deliverables 1, 2, and 5, two placeholder student tests, and the need to disclose Codex assistance. Noted that the README requires four original tests inside `StudentMazeSolverTest`, while Codex’s additional tests were placed in a separate class.
+
+## 3. Deliverable 1: State-Transition Table
+
+**User:**
+> Follow the deliverable 1 prompt
+
+**Codex response:**
+
+For moves `R`, `D`, `D`, the robot moves right once, then hits the wall at `(2, 2)` twice. Only the successful move costs energy.
+
+| Step | Move Command | Attempted Pos | Walkable? | Updated Robot Pos | Remaining Energy | Cells Collected | Note |
+|:----:|:------------:|:-------------:|:---------:|:-----------------:|:----------------:|:---------------:|:-----|
+| 0 | *Init* | — | — | `(1, 1)` | 10 | 0 | Initial state |
+| 1 | `R` | `(1, 2)` | Yes | `(1, 2)` | 9 | 0 | Moves onto floor; costs 1 energy |
+| 2 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Wall blocks movement; no energy cost |
+| 3 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Same wall blocks movement again |
+
+## 4. Deliverable 2: Parameter Passing and Aliasing
+
+**User:**
+> Follow the deliverable 2 prompt
+
+**Codex response:**
+
+Assume the caller creates `val pos = Array(3, 2)`.
+
+```text
+During moveNorth(pos):
+
+STACK                              HEAP
+Caller:
+  pos ────────────────────────────► Array A [3, 2]
+                                      ▲
+moveNorth frame:                      │
+  position ───────────────────────────┘
+
+position(0) -= 1 changes Array A to [2, 2].
+After return, the caller's pos sees [2, 2].
+
+
+During localReset(pos):
+
+STACK                              HEAP
+Caller:
+  pos ────────────────────────────► Array A [2, 2]
+                                      ▲
+localReset frame:                     │
+  position ───────────────────────────┘
+  replacement ────────────────────► Array B [1, 1]
+
+Array A is unchanged.
+After return, pos still points to Array A [2, 2].
+Array B can be garbage-collected once unreachable.
+```
+
+**1. Why does `moveNorth` mutate the caller’s array, whereas an `Int` cannot be mutated by the callee?**
+
+Scala passes arguments by value. For an array, the copied value is a reference, so `pos` and `position` point to the same array. Changing an element changes that shared array. For an `Int`, the numeric value is copied; changing a local variable holding that value does not change the caller’s variable.
+
+**2. Why does Scala reject `position = Array(1, 1)`, and what happens with `val replacement = Array(1, 1)`?**
+
+Parameters are immutable bindings, so `position` cannot be reassigned. Its array elements can still be mutated. Declaring `replacement` creates a separate local binding pointing to a new array; it does not change the caller’s reference or original array.
+
+**3. How does call-by-name differ from passing a reference or primitive value?**
+
+A call-by-value argument is evaluated once before the call, and its resulting value is passed. A call-by-name argument passes an expression whose evaluation is deferred until it is used. In `repeatUntilStopped`, `action` is evaluated again for every loop-condition check, allowing each check to perform an action and observe updated state.
+
+## 5. Deliverable 5: Architectural Reflection
+
+**User:**
+> Follow the Deliverable 5 prompt
+
+**Codex response:**
+
+**1. What problems or vulnerabilities arise when multiple procedures directly read and mutate naked arrays?**
+
+Any procedure holding an array reference can change its contents, so one procedure can accidentally affect another through aliasing. Arrays also leave important rules unenforced: a position array could have the wrong length, row and column could be swapped, or the robot could be placed outside the maze. Passing separate arrays and variables makes it easier to mix up state from different games and harder to trace unexpected changes.
+
+**2. How would an Object-Oriented or ADT-based design improve encapsulation, type safety, and maintainability in Project 2?**
+
+A `Maze` could protect its grid and provide methods that check bounds and control cell collection. A `Robot` could keep its position and energy together, while a `Position` type could give row and column explicit names. A `Cell` ADT could represent walls, floors, energy cells, and exits without relying on character markers. These types would make invalid state harder to create, keep validation in one place, and make the code easier to understand, test, and extend.
+
+
+
+## Codex — StudentMazeSolverTest
+
+This is an abridged transcript. Assistant responses are summarized, not quoted verbatim.
+
+### Prompt 1
+
+**User:**
+> Let's work on the remaining StudentMazeSolverTest tests to fulfill the requirement
+
+**Codex response and edits:**
+Replaced two placeholder tests in `MazeSolverTest.scala`:
+- `testTrappedRobot`: attempts all four directions and checks that the robot's position and energy remain unchanged.
+- `testEnergyExhaustion`: checks that movement stops at zero energy, the previously collected cell remains counted, and a later cell remains untouched.
+
+Removed the corresponding TODO comments and updated the test display names.
+
+**Validation:** All four student tests and `scalafmtCheckAll` passed.
+
+### Prompt 2
+
+**User:**
+> lets work on the studentmazesolvertest class
+> // TODO: Add your own unit tests here to thoroughly test edge cases:
+> // - Boundary conditions (robot trapped by walls on all 4 sides)
+> // - Energy exhaustion before reaching the exit
+> // - Mazes with multiple energy cells or alternate branches
+> // - Emergency scanner on mazes with cyclic / loop-containing corridors
+
+**Codex response and edits:**
+Kept the existing trapped-robot, energy-exhaustion, and scanner tests. Added:
+- `testMultipleEnergyCells`: collects two cells and revisits a consumed cell to verify it provides no second bonus.
+- `testAlternateBranches`: compares two routes to the same exit, checking their different energy totals, collected-cell counts, and maze mutations.
+
+**Validation:** All six student tests and `scalafmtCheckAll` passed.
+
+
+## Codex — Written Deliverables
+
+This is an abridged transcript. Assistant responses are summarized, not quoted verbatim. Codex supplied text for the user to paste into the README; it did not edit the README directly.
+
+### Deliverable 1
+
+**User:**
+> Follow the deliverable 1 prompt
+
+**Codex response:**
+Provided the state-transition table for moves `R`, `D`, `D`:
+- `R` moves the robot from `(1, 1)` to `(1, 2)`, reducing energy from 10 to 9.
+- Both `D` attempts hit the wall at `(2, 2)`.
+- Blocked moves leave position and energy unchanged.
+- No energy cells are collected.
+
+### Deliverable 2
+
+**User:**
+> Follow the deliverable 2 prompt
+
+**Codex response:**
+Provided an ASCII stack-and-heap diagram showing:
+- The caller's `pos` and `moveNorth`'s `position` reference the same array.
+- Mutating `position(0)` changes the array visible to the caller.
+- `localReset` creates a separate array referenced by `replacement`, leaving the original array unchanged.
+
+Also supplied explanations of call-by-value, immutable parameter bindings, array mutation, and repeated evaluation of call-by-name arguments.
+
+### Deliverable 5
+
+**User:**
+> Follow the Deliverable 5 prompt
+
+**Codex response:**
+Provided answers explaining:
+- How shared mutable arrays can cause aliasing bugs, invalid positions, mixed-up coordinates, and difficult-to-trace state changes.
+- How `Maze`, `Robot`, `Position`, and a `Cell` ADT could improve encapsulation, validation, type safety, and maintainability in Project 2.

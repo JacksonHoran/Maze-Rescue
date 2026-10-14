@@ -33,6 +33,18 @@ The prompts given to the AI, in order:
 9. "mark the AI disclosure as yes, then create a MD file in a doc/ directory and link to it in the readme"
 10. "yes export the transcript and link it"
 
+
+### OpenAI Codex
+
+1. "can we get started on maze-rescue main file"
+2. "double check the readme's requirements"
+3. "Follow the deliverable 1 prompt"
+4. "Follow the deliverable 2 prompt"
+5. "Follow the Deliverable 5 prompt"
+6. "Let's work on the remaining StudentMazeSolverTest tests to fulfill the requirement"
+7. "lets work on the studentmazesolvertest class", followed by the edge-case checklist for trapped robots, energy exhaustion, multiple cells or alternate branches, and cyclic scanner traversal.
+8. Requests to draft AI usage and transcript documentation covering implementation, tests, and written deliverables.
+
 ## Transcript
 
 The full session transcript is in [ai-transcript.md](ai-transcript.md). It was converted from the Claude Code session log: every prompt and reply is included, tool calls are summarized, and long tool output is truncated.
