@@ -254,9 +254,9 @@ Trace the three moves `R`, `D`, `D` on the `smallLines` 5×5 maze starting at `(
 | Step | Move Command | Attempted Pos | Walkable? | Updated Robot Pos | Remaining Energy | Cells Collected | Note |
 |:----:|:------------:|:-------------:|:---------:|:-----------------:|:----------------:|:---------------:|:-----|
 | 0 | *Init* | — | — | `(1, 1)` | 10 | 0 | Initial state |
-| 1 | `R` | `(1, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
-| 2 | `D` | `(2, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
-| 3 | `D` | `(2, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
+| 1 | `R` | `(1, 2)` | Yes | `(1, 2)` | 9 | 0 | Move onto block. Costs 1 energy |
+| 2 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Wall blocks movement. Costs 0 energy |
+| 3 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Movement blocked by same wall. Costs 0 energy |
 
 ---
 
