@@ -384,14 +384,15 @@ Compare `revealReachable` (recursive) with `revealReachableIterative` (explicit 
 
 In this assignment, all state is represented using raw arrays (`Array[Array[Char]]`, `Array[Int]`) and loose variables passed into top-level procedures.
 1. What problems or vulnerabilities arise when multiple procedures directly read and mutate naked arrays?
-   > [TODO: Your answer here]
+   > Any procedure holding an array reference can change its contents, so one procedure can accidentally affect another through aliasing. Arrays also leave important rules unenforced: a position array could have the wrong length, row and column could be swapped, or the robot could be placed outside the maze. Passing separate arrays and variables makes it easier to mix up state from different games and harder to trace unexpected changes.
 
 2. How would an Object-Oriented or ADT-based design (e.g., `Maze`, `Robot`, `Cell`, `Position`) improve encapsulation, type safety, and maintainability in Project 2?
-   > [TODO: Your answer here]
+   > A `Maze` could protect its grid and provide methods that check bounds and control cell collection. A `Robot` could keep its position and energy together, while a `Position` type could give row and column explicit names. A `Cell` ADT could represent walls, floors, energy cells, and exits without relying on character markers. These types would make invalid state harder to create, keep validation in one place, and make the code easier to understand, test, and extend.
 
 ---
 
 ### AI Usage Disclosure
 * [ ] No AI tools were used on this assignment.
 * [x] AI tools were used (describe tool, prompts, and provide transcript link below or transcript document(s) in doc/ subdirectory):
-  > Claude Code (Claude Opus 5.5) was used for Part B code, tests, and Deliverables 3–4. See [doc/ai-usage.md](doc/ai-usage.md) for the tool, prompts, and transcript.
+  > Claude Code (Claude Opus 5.5) was used for Part B code, tests, and Deliverables 3–4. Codex (GPT-6.1 Sol) was used for Deliverables 1, 2, 5, and the completing the remainder of Maze-Rescue.scala. See [doc/ai-usage.md](doc/ai-usage.md) for the tool, prompts, and transcript.
+  
