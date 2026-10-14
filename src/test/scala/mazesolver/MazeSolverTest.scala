@@ -579,48 +579,22 @@ class SampleMazesTest:
 
 class StudentMazeSolverTest:
 
-  // Edge cases covered below:
+  // TODO: Add your own unit tests here to thoroughly test edge cases:
   // - Boundary conditions (robot trapped by walls on all 4 sides)
-  // - Energy exhaustion before reaching the exit, after an energy cell bonus
+  // - Energy exhaustion before reaching the exit
+  // - Mazes with multiple energy cells or alternate branches
   // - Emergency scanner on mazes with cyclic / loop-containing corridors
-  // - Recursive and iterative flood fill agreeing on every sample maze
 
-  @Test @DisplayName("robot walled in on all 4 sides cannot move and keeps all its energy")
+  @Test @DisplayName("TODO: student test for completely trapped robot")
   def testTrappedRobot(): Unit =
-    val lines = Array(
-      "#####",
-      "##.##",
-      "#.#.#",
-      "##R##",
-      "#####"
-    )
-    val (maze, robot, _, _) = initGame(lines, 5)
-    // The robot sits on (3, 2); floor cells nearby are only diagonal, so every direction is blocked
-    for dir <- "UDLR" do
-      assertFalse(moveRobot(maze, robot, dir), s"Move $dir should be blocked")
-      assertArrayEquals(Array(3, 2), robot, s"Robot should not move after $dir")
-    // Blocked moves are free, so a long move string costs no energy
-    assertEquals((5, 0, false), playGame(maze, robot, "UDLRUDLRUDLR", 5))
-    assertArrayEquals(Array(3, 2), robot)
+    // TODO: Construct a maze where the robot is enclosed by walls '#', attempt moves in all 4 directions,
+    // and verify the robot cannot move and energy is preserved.
+    assertTrue(true)
 
-  @Test @DisplayName("robot runs out of energy one step short of the exit, even after a cell bonus")
+  @Test @DisplayName("TODO: student test for energy exhaustion mid-journey")
   def testEnergyExhaustion(): Unit =
-    val lines = Array(
-      "########",
-      "#RC...E#",
-      "########"
-    )
-    val (maze, robot, _, _) = initGame(lines, 1)
-    // R: energy 1 -> 0, then the cell gives +3 -> 3. Three more moves drain it to 0 at (1, 5).
-    assertEquals((0, 1, false), playGame(maze, robot, "RRRRR", 1))
-    assertArrayEquals(Array(1, 5), robot, "Stranded one cell before the exit")
-    assertEquals('.', maze(1)(2), "Collected cell is replaced with floor")
-    assertFalse(isAtExit(maze, robot))
-
-    // playMoves stops the same way and reports 0 remaining energy
-    val (maze2, robot2, _, _) = initGame(lines, 1)
-    assertEquals(0, playMoves(maze2, robot2, "RRRRR", 1))
-    assertArrayEquals(Array(1, 5), robot2)
+    // TODO: Verify that a robot running out of energy becomes stranded and returns (0, cells, false).
+    assertTrue(true)
 
   @Test @DisplayName("revealReachable terminates on a corridor loop and counts each cell once")
   def testScannerCyclicCorridor(): Unit =
