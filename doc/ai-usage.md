@@ -4,7 +4,7 @@
 
 - **Tool:** Claude Code (Claude desktop app, Code tab)
 - **Model:** Claude Opus 5.5 (Anthropic)
-- **Used by:** Jackson Horan (Part B)
+- **Used by:** Jackson Horan (Partner B)
 
 ## What AI was used for
 
@@ -13,10 +13,13 @@
 | Planning | Proposed a division of work between partners (`WORK_SPLIT.md`), then rebalanced it so code and writing are roughly 50/50 |
 | Code (`MazeSolver.scala`) | Implemented `isWalkable`, `directionDelta`, `render`, `repeatUntilStopped`, `revealReachable`, and `revealReachableIterative` (extra credit) |
 | Tests (`MazeSolverTest.scala`) | Wrote two `StudentMazeSolverTest` cases: flood fill on a cyclic corridor, and recursive vs. iterative flood fill agreement on all sample mazes |
-| Written report (`README.md`) | Wrote Deliverable 3 (scanner call-stack trace + 4 questions) and Deliverable 4 (recursion vs. iteration), then simplified the wording on request |
+| Written report (`README.md`) | Drafted Deliverable 3 (scanner call-stack trace + 4 questions) and Deliverable 4 (recursion vs. iteration) and simplified the wording on request; Jackson then revised both by hand |
+| Review of Part A | Checked Victor's Part A code against the README and listed what was still missing |
+| Tests (`MazeSolverTest.scala`) | Wrote the two remaining `StudentMazeSolverTest` cases: fully trapped robot, and energy exhaustion one step before the exit after a cell bonus |
+| Written report (`README.md`) | Drafted Deliverable 1 (state-transition table), Deliverable 2 (memory diagram + 3 questions), and Deliverable 5 (procedural vs. OO reflection) |
 
 All AI-generated code was compiled and tested with `sbt test` and checked with `sbt scalafmtCheckAll`.
-Partner A's work (Part A) is not covered here.
+Victor's Part A code (movement, game loop, aliasing procedures) is not covered here. The Part A student tests and Deliverables 1, 2 and 5 listed above were drafted with AI in a second session.
 
 ## Prompts
 
@@ -32,6 +35,8 @@ The prompts given to the AI, in order:
 8. "can you make the written response answers that you wrote but simpler, still technical but a littel simpler"
 9. "mark the AI disclosure as yes, then create a MD file in a doc/ directory and link to it in the readme"
 10. "yes export the transcript and link it"
+11. "my parnter did part A, can you sift through the repo and make sure everything is done?"
+12. "yea lets draft those up now. Do not commit anything yet."
 
 
 ### OpenAI Codex
@@ -44,6 +49,9 @@ The prompts given to the AI, in order:
 6. "Let's work on the remaining StudentMazeSolverTest tests to fulfill the requirement"
 7. "lets work on the studentmazesolvertest class", followed by the edge-case checklist for trapped robots, energy exhaustion, multiple cells or alternate branches, and cyclic scanner traversal.
 8. Requests to draft AI usage and transcript documentation covering implementation, tests, and written deliverables.
+Second session (Part A review and drafts):
+
+
 
 ## Transcript
 
