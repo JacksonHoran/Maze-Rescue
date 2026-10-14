@@ -267,18 +267,43 @@ Illustrate with an ASCII diagram the stack and heap layout during execution of:
 2. `localReset(pos)`
 
 ```
-[TODO: Provide your ASCII memory diagram here showing Stack Frames, Callee Parameters, and Heap Arrays]
+During moveNorth(pos):
+
+STACK                              HEAP
+Caller:
+  pos ────────────────────────────► Array A [3, 2]
+                                      ▲
+moveNorth frame:                      │
+  position ───────────────────────────┘
+
+position(0) -= 1 changes Array A to [2, 2].
+After return, the caller's pos sees [2, 2].
+
+
+During localReset(pos):
+
+STACK                              HEAP
+Caller:
+  pos ────────────────────────────► Array A [2, 2]
+                                      ▲
+localReset frame:                     │
+  position ───────────────────────────┘
+  replacement ────────────────────► Array B [1, 1]
+
+Array A is unchanged.
+After return, pos still points to Array A [2, 2].
+Array B can be garbage-collected once unreachable.
 ```
 
 **Written Explanation:**
 1. Why does `moveNorth` mutate the caller's array, whereas passing an `Int` variable (e.g. `energy`) cannot be mutated by the callee?
-   > [TODO: Your answer here]
+   > Scala passes arguments by value. For an array, the copied value is a reference, so `pos` and `position` point to the same array. Changing an element changes that shared array. For an `Int`, the numeric value is copied; changing a local variable holding that value does not change the caller’s variable.
 
 2. Why does Scala reject `position = Array(1, 1)` in parameter lists, and what happens when you rebind a local `val replacement = Array(1, 1)`?
-   > [TODO: Your answer here]
+   > Parameters are immutable bindings, so `position` cannot be reassigned. Its array elements can still be mutated. Declaring `replacement` creates a separate local binding pointing to a new array; it does not change the caller’s reference or original array
 
 3. How does call-by-name (`action: => Boolean` in `repeatUntilStopped`) fundamentally differ from passing a reference or passing a primitive value?
-   > [TODO: Your answer here]
+   > A call-by-value argument is evaluated once before the call, and its resulting value is passed. A call-by-name argument passes an expression whose evaluation is deferred until it is used. In `repeatUntilStopped`, `action` is evaluated again for every loop-condition check, allowing each check to perform an action and observe updated state.
 
 ---
 
