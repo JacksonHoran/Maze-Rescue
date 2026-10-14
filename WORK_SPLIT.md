@@ -1,18 +1,20 @@
 # Maze Rescue — Proposed Work Split
 
+> **Note:** This document is for use by AI agents working on this repository, to show which partner owns which part of the work.
+
 A starting point for discussion. The goal is an even split of **actual work**: about half
 the code and about half the written report each, not an even split of rubric points. Line
 counts below are rough estimates of finished code.
 
 ---
 
-## Partner A — Robot Movement, Game Loop & Aliasing
+## Partner A (Victor) — Robot Movement, Game Loop & Aliasing
 
 **Code** (`src/main/scala/mazesolver/MazeSolver.scala`): ~50 lines
 
 | Procedure | Est. lines | Notes |
 |:--|:--:|:--|
-| `moveRobot` | ~8 | Uses B's `isWalkable` + `directionDelta` |
+| `moveRobot` | ~8 | Uses Jackson's `isWalkable` + `directionDelta` |
 | `collectCell` | ~5 | |
 | `isAtExit` | ~2 | |
 | `playMoves` | ~15 | Most debugging: stop at 0 energy / at exit, blocked moves are free |
@@ -31,14 +33,14 @@ counts below are rough estimates of finished code.
 
 ---
 
-## Partner B — Grid Helpers, Rendering, Call-by-Name & Flood Fill
+## Partner B (Jackson) — Grid Helpers, Rendering, Call-by-Name & Flood Fill
 
 **Code** (`src/main/scala/mazesolver/MazeSolver.scala`): ~50 lines
 
 | Procedure | Est. lines | Notes |
 |:--|:--:|:--|
-| `isWalkable` | ~3 | **Do first.** A's `moveRobot` needs it |
-| `directionDelta` | ~6 | **Do first.** A's `moveRobot` needs it |
+| `isWalkable` | ~3 | **Do first.** Victor's `moveRobot` needs it |
+| `directionDelta` | ~6 | **Do first.** Victor's `moveRobot` needs it |
 | `render` | ~12 | String building with `@` overlay + status line |
 | `repeatUntilStopped` | ~5 | Call-by-name loop |
 | `revealReachable` | ~10 | Recursive flood fill: the conceptually hardest piece |
@@ -57,13 +59,13 @@ counts below are rough estimates of finished code.
 
 ## Why this is even
 
-| | Partner A | Partner B |
+| | Partner A (Victor) | Partner B (Jackson) |
 |:--|:--|:--|
 | Code | ~50 lines, mostly game-loop logic and edge cases | ~50 lines, fewer but harder (recursion, extra credit) |
 | Writing | 1 small table + 1 diagram + 5 short answers | 1 long trace + 4 short answers + 3-part comparison |
 | Student tests | 2 | 2 |
 
-If the extra credit is skipped, B is lighter on code. In that case B should also write the
+If the extra credit is skipped, Jackson is lighter on code. In that case Jackson should also write the
 AI usage disclosure and do the final coverage/CI pass.
 
 ---
@@ -83,7 +85,7 @@ AI usage disclosure and do the final coverage/CI pass.
 1. **Never commit to `main`.** Each person works on their own branch and opens a PR:
    - `partA-movement-game`
    - `partB-helpers-floodfill`
-2. **B pushes `isWalkable` + `directionDelta` early** (a tiny first PR) so A can test `moveRobot`. A can stub them locally until then.
+2. **Jackson pushes `isWalkable` + `directionDelta` early** (a tiny first PR) so Victor can test `moveRobot`. Victor can stub them locally until then.
 3. Both edit `MazeSolver.scala` and `README.md`, but in different functions/sections, so conflicts should be small. Pull `main` often.
 4. Run before every push:
    ```bash
@@ -98,7 +100,7 @@ AI usage disclosure and do the final coverage/CI pass.
 
 | When | Milestone |
 |:--|:--|
-| Day 1 | B merges `isWalkable` + `directionDelta`; both start main code |
+| Day 1 | Jackson merges `isWalkable` + `directionDelta`; both start main code |
 | Day 2–3 | Finish code on branches, open PRs, review and merge |
 | Day 4 | Written deliverables + student tests |
 | Day 5 | Proofread each other's writing, play-through with `sbt run`, coverage + CI, submit |
