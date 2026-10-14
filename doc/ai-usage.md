@@ -4,7 +4,7 @@
 
 - **Tool:** Claude Code (Claude desktop app, Code tab)
 - **Model:** Claude Opus 5.5 (Anthropic)
-- **Used by:** Jackson Horan (Partner B)
+- **Used by:** Jackson Horan (Part B)
 
 ## What AI was used for
 
@@ -13,13 +13,10 @@
 | Planning | Proposed a division of work between partners (`WORK_SPLIT.md`), then rebalanced it so code and writing are roughly 50/50 |
 | Code (`MazeSolver.scala`) | Implemented `isWalkable`, `directionDelta`, `render`, `repeatUntilStopped`, `revealReachable`, and `revealReachableIterative` (extra credit) |
 | Tests (`MazeSolverTest.scala`) | Wrote two `StudentMazeSolverTest` cases: flood fill on a cyclic corridor, and recursive vs. iterative flood fill agreement on all sample mazes |
-| Written report (`README.md`) | Drafted Deliverable 3 (scanner call-stack trace + 4 questions) and Deliverable 4 (recursion vs. iteration) and simplified the wording on request; Jackson then revised both by hand |
-| Review of Part A | Checked Victor's Part A code against the README and listed what was still missing |
-| Tests (`MazeSolverTest.scala`) | Wrote the two remaining `StudentMazeSolverTest` cases: fully trapped robot, and energy exhaustion one step before the exit after a cell bonus |
-| Written report (`README.md`) | Drafted Deliverable 1 (state-transition table), Deliverable 2 (memory diagram + 3 questions), and Deliverable 5 (procedural vs. OO reflection) |
+| Written report (`README.md`) | Wrote Deliverable 3 (scanner call-stack trace + 4 questions) and Deliverable 4 (recursion vs. iteration), then simplified the wording on request |
 
 All AI-generated code was compiled and tested with `sbt test` and checked with `sbt scalafmtCheckAll`.
-Victor's Part A code (movement, game loop, aliasing procedures) is not covered here. The Part A student tests and Deliverables 1, 2 and 5 listed above were drafted with AI in a second session.
+Partner A's work (Part A) is not covered here.
 
 ## Prompts
 

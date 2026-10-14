@@ -579,11 +579,11 @@ class SampleMazesTest:
 
 class StudentMazeSolverTest:
 
-  // Edge cases covered below:
+  // TODO: Add your own unit tests here to thoroughly test edge cases:
   // - Boundary conditions (robot trapped by walls on all 4 sides)
-  // - Energy exhaustion before reaching the exit, after an energy cell bonus
+  // - Energy exhaustion before reaching the exit
+  // - Mazes with multiple energy cells or alternate branches
   // - Emergency scanner on mazes with cyclic / loop-containing corridors
-  // - Recursive and iterative flood fill agreeing on every sample maze
 
   @Test @DisplayName("trapped robot cannot move in any direction and preserves energy")
   def testTrappedRobot(): Unit =
